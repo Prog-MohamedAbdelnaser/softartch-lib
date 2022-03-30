@@ -1,4 +1,4 @@
-package com.softtech.sample.data.sources.remote.di
+package com.locationpicker.sample.data.sources.remote.di
 
 import com.google.gson.GsonBuilder
 import com.locationpicker.sample.data.sources.remote.RemoteConstants

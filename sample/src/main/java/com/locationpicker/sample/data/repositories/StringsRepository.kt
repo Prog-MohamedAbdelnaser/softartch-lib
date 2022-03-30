@@ -1,6 +1,6 @@
 package com.locationpicker.sample.data.repositories
 
-import com.nasmanpower.nas.data.sources.resources.AppResources
+import com.locationpicker.sample.data.sources.resources.AppResources
 import com.locationpicker.sample.R
 
 class StringsRepository(private val appResources: AppResources) {

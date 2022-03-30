@@ -12,7 +12,7 @@ import com.locationpicker.sample.di.useCaseModule
 import com.locationpicker.sample.features.splash.di.splashModule
 import com.softartch_lib.BuildConfig
 import com.softartch_lib.SoftArtchLib
-import com.softtech.sample.data.sources.remote.di.remoteModule
+import com.locationpicker.sample.data.sources.remote.di.remoteModule
 import org.koin.android.ext.android.startKoin
 import timber.log.Timber
 

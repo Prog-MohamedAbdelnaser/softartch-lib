@@ -15,7 +15,7 @@ class FragmentSplash : BaseFragment() {
     override fun onViewInflated(parentView: View, childView: View) {
         super.onViewInflated(parentView, childView)
 
-        moveToHome()
+      //  moveToHome()
 
     }
     fun moveToHome(){

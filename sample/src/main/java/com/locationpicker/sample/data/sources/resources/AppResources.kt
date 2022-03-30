@@ -1,4 +1,4 @@
-package com.nasmanpower.nas.data.sources.resources
+package com.locationpicker.sample.data.sources.resources
 
 import android.app.Application
 

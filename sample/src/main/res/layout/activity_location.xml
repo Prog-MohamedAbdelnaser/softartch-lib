@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@id/fragmentSplash"
-    android:name="com.locationpicker.sample.features.location.fragmentes.AddressFragmentWithSearchBar"
+    android:name="com.locationpicker.sample.features.location.fragmentes.MapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"

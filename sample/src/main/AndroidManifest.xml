@@ -27,16 +27,17 @@
         <activity
             android:name=".features.splash.SplashActivity"
             android:theme="@style/AppTheme.NoActionBar_WhiteStatusBar">
+        </activity>
+
+        <activity android:name=".features.location.activities.LocationAddress"
+
+            android:theme="@style/AppTheme.NoActionBar_WhiteStatusBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".features.location.activities.LocationAddress"
-
-            android:theme="@style/AppTheme.NoActionBar_WhiteStatusBar"/>
     </application>
 
 </manifest>

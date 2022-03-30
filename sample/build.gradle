@@ -123,7 +123,6 @@ dependencies {
     //timber
     implementation "com.jakewharton.timber:timber:$versions.timber"
 
-
     implementation project(path: ':soft-arch-lib')
 
 

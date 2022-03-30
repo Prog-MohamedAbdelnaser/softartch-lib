@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/android_templet_structure.iml" filepath="$PROJECT_DIR$/android_templet_structure.iml" group="android_templet_structure" />
-      <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" group="android_templet_structure/sample" />
-      <module fileurl="file://$PROJECT_DIR$/soft-arch-lib/soft-arch-lib.iml" filepath="$PROJECT_DIR$/soft-arch-lib/soft-arch-lib.iml" group="android_templet_structure/soft-arch-lib" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/location-picker-places-search-lib.iml" filepath="$PROJECT_DIR$/.idea/modules/location-picker-places-search-lib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sample/location-picker-places-search-lib.sample.iml" filepath="$PROJECT_DIR$/.idea/modules/sample/location-picker-places-search-lib.sample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/soft-arch-lib/location-picker-places-search-lib.soft-arch-lib.iml" filepath="$PROJECT_DIR$/.idea/modules/soft-arch-lib/location-picker-places-search-lib.soft-arch-lib.iml" />
     </modules>
   </component>
 </project>

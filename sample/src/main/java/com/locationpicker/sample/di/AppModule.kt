@@ -9,7 +9,7 @@ import com.locationpicker.sample.data.sources.local.AppPreferenceConstants.DEFAU
 import com.locationpicker.sample.data.sources.local.AppPreferenceConstants.PREFERENCE_FILE_NAME
 import com.locationpicker.sample.di.DIConstants.KEY_CURRENT_LANGUAGE
 import com.locationpicker.sample.di.DIConstants.KEY_DEVICE_ID
-import com.nasmanpower.nas.data.sources.resources.AppResources
+import com.locationpicker.sample.data.sources.resources.AppResources
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module.module
 

@@ -16,11 +16,13 @@ import kotlinx.android.synthetic.main.fragment_location.*
 
 class AddressFragmentWithSearchBar : LocationPickerFragmentWithSearchBar(){
 
-    override fun setGoogleAPIKEY(): String =getString(R.string.google_maps_key)
+    //todo set your api key here
+    override fun setGoogleAPIKEY(): String =""
 
     override fun mapViewResource(): MapView =mapView
 
     override fun layoutResource(): Int = R.layout.fragment_location
+
 
 
     override fun onViewInflated(parentView: View, childView: View) {
