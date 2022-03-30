@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.loading.*
 import kotlinx.android.synthetic.main.place_holder_layout.*
 import org.koin.standalone.KoinComponent
 
-abstract class BaseFragment : Fragment(),KoinComponent {
+abstract class BaseFragment : Fragment() {
 
     @LayoutRes
     abstract fun layoutResource(): Int
