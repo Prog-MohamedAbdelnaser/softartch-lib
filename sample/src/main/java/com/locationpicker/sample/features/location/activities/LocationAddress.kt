@@ -30,6 +30,7 @@ class LocationAddress: BaseActivity() {
         dialogFragment.show(supportFragmentManager, "dialog")*/
     }
 
+/*
     class LocationPicker : LocationPickerDialog() {
         override fun layoutResource(): Int = R.layout.location_dialog
 
@@ -57,4 +58,5 @@ class LocationAddress: BaseActivity() {
             super.onGetLocationAddress(locationAddress)
         }
     }
+*/
 }

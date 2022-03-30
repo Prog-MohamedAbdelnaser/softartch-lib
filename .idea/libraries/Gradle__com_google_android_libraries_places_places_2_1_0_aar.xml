@@ -1,9 +1,9 @@
 <component name="libraryTable">
   <library name="Gradle: com.google.android.libraries.places:places:2.1.0@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d6115c3b5056f3ec5d7c2c8a299e6cff/jetified-places-2.1.0/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d6115c3b5056f3ec5d7c2c8a299e6cff/jetified-places-2.1.0/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d6115c3b5056f3ec5d7c2c8a299e6cff/jetified-places-2.1.0/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/8db1592427779abcc0b39ac33fd1338c/jetified-places-2.1.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/8db1592427779abcc0b39ac33fd1338c/jetified-places-2.1.0/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/8db1592427779abcc0b39ac33fd1338c/jetified-places-2.1.0/res" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.android.libraries.places/places/2.1.0/85e57daf2abd1f2f60a04ae8a34e08b90c609e80/places-2.1.0-javadoc.jar!/" />

@@ -58,7 +58,7 @@ import kotlin.collections.ArrayList
 
 
 @Suppress("RedundantLambdaArrow", "MissingPermission")
-abstract class BaseMapFragment : BaseFragment(), OnMapReadyCallback{
+abstract class BaseMapFragment : BaseFragment(){
 
     companion object {
         const val SAUDIA_FILTER="SA"
@@ -135,18 +135,39 @@ abstract class BaseMapFragment : BaseFragment(), OnMapReadyCallback{
 
     override fun onViewInflated(parentView: View, childView: View) {
         mapViewResource().onCreate(savedInstanceState)
-        mapViewResource().getMapAsync(this)
+        mapViewResource().getMapAsync(object :OnMapReadyCallback{
+            override fun onMapReady(map: GoogleMap?) {
+                googleMap = map
+                googleMap?.apply {
 
-        GOOGLE_API_KEY=setGoogleAPIKEY()
+                    enableMapTypeControls(this)
 
-        try {
-            if (!Places.isInitialized()) {
-                Places.initialize(requireContext(), GOOGLE_API_KEY!!)
+                    setupGoogleMap(this)
+                    disposable = checkPermission()
+                        .flatMap(requestLocationPermissionFunction())
+                        .doOnSuccess {
+                            listenToGPSChanges()
+                        }
+                        .flatMap(requestLocationServiceSettingFunction())
+                        .subscribe({
+                            startLocationTracking(googleMap)
+                        }, {
+                            if (it is PermissionDeniedException) {
+
+                                // todo if you need to show user popup with permission need description
+                            } else {
+                                // showErrorSnackbar(requireView(), getString(R.string.wont_detect_location))
+                            }
+                        })
+
+                    setHasOptionsMenu(true)
+                }
             }
 
-        }catch (e:Exception){
-            e.printStackTrace()
-        }
+        })
+
+
+        GOOGLE_API_KEY=setGoogleAPIKEY()
 
         initViewModelObservers()
 
@@ -195,34 +216,6 @@ abstract class BaseMapFragment : BaseFragment(), OnMapReadyCallback{
     fun setMarkerTitle(title:String){
         tvAddress?.text = title
         targetMarker?.showInfoWindow()
-    }
-
-    override fun onMapReady(googleMap: GoogleMap?) {
-        this.googleMap = googleMap
-        googleMap?.apply {
-
-            enableMapTypeControls(this)
-
-            setupGoogleMap(this)
-            disposable = checkPermission()
-                    .flatMap(requestLocationPermissionFunction())
-                    .doOnSuccess {
-                        listenToGPSChanges()
-                    }
-                    .flatMap(requestLocationServiceSettingFunction())
-                    .subscribe({
-                        startLocationTracking(googleMap)
-                    }, {
-                        if (it is PermissionDeniedException) {
-
-                            // todo if you need to show user popup with permission need description
-                        } else {
-                       // showErrorSnackbar(requireView(), getString(R.string.wont_detect_location))
-                        }
-                    })
-
-            setHasOptionsMenu(true)
-        }
     }
 
     private fun startLocationTracking(googleMap: GoogleMap?) {

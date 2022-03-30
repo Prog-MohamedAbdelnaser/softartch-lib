@@ -60,7 +60,7 @@ android {
 
 dependencies {
     // https://stackoverflow.com/a/44348581/3512164
-    implementation "org.jetbrains.kotlin:kotlin-reflect:$versions.kotlin"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -115,8 +115,8 @@ dependencies {
     implementation "android.arch.navigation:navigation-ui-ktx:$versions.navigation"
 
     //google service
-    implementation "com.google.android.gms:play-services-maps:$versions.location"
-    implementation "com.google.android.gms:play-services-location:$versions.location"
+    implementation "com.google.android.gms:play-services-maps:18.0.2"
+    implementation "com.google.android.gms:play-services-location:19.0.1"
     implementation "com.google.android.gms:play-services-places:$versions.places"
 
 

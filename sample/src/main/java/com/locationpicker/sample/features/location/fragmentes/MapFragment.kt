@@ -29,6 +29,10 @@ class MapFragment : BaseMapFragment(){
     override fun onViewInflated(parentView: View, childView: View) {
         super.onViewInflated(parentView, childView)
 
+        //to fillter auto complete  search result
+        // setSearchLocalizationFilter(SAUDIA_FILTER)
+
+
         // to initialize map location pin
         setMapPickLoctionIcon(R.drawable.ic_location)
 

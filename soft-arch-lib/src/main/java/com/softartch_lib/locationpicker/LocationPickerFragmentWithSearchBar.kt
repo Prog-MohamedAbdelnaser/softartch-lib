@@ -58,7 +58,7 @@ import kotlin.collections.ArrayList
 
 
 @Suppress("RedundantLambdaArrow", "MissingPermission")
-abstract class LocationPickerFragmentWithSearchBar : BaseFragment(), OnMapReadyCallback, PlacesSearchResultAdapter.ClickPlaceItemListener{
+abstract class LocationPickerFragmentWithSearchBar : BaseFragment(), PlacesSearchResultAdapter.ClickPlaceItemListener{
 
 
     override fun clickPickedPlace(place: Place) {
@@ -183,7 +183,36 @@ abstract class LocationPickerFragmentWithSearchBar : BaseFragment(), OnMapReadyC
 
     override fun onViewInflated(parentView: View, childView: View) {
         mapViewResource().onCreate(savedInstanceState)
-        mapViewResource().getMapAsync(this)
+        mapViewResource().getMapAsync(object :OnMapReadyCallback{
+            override fun onMapReady(map: GoogleMap?) {
+                googleMap = map
+                googleMap?.apply {
+
+                    enableMapTypeControls(this)
+
+                    setupGoogleMap(this)
+                    disposable = checkPermission()
+                        .flatMap(requestLocationPermissionFunction())
+                        .doOnSuccess {
+                            listenToGPSChanges()
+                        }
+                        .flatMap(requestLocationServiceSettingFunction())
+                        .subscribe({
+                            startLocationTracking(googleMap)
+                        }, {
+                            if (it is PermissionDeniedException) {
+
+                                // todo if you need to show user popup with permission need description
+                            } else {
+                                // showErrorSnackbar(requireView(), getString(R.string.wont_detect_location))
+                            }
+                        })
+
+                    setHasOptionsMenu(true)
+                }
+            }
+
+        })
 
         GOOGLE_API_KEY=setGoogleAPIKEY()
 
@@ -349,33 +378,6 @@ abstract class LocationPickerFragmentWithSearchBar : BaseFragment(), OnMapReadyC
         targetMarker?.showInfoWindow()
     }
 
-    override fun onMapReady(googleMap: GoogleMap?) {
-        this.googleMap = googleMap
-        googleMap?.apply {
-
-            enableMapTypeControls(this)
-
-            setupGoogleMap(this)
-            disposable = checkPermission()
-                    .flatMap(requestLocationPermissionFunction())
-                    .doOnSuccess {
-                        listenToGPSChanges()
-                    }
-                    .flatMap(requestLocationServiceSettingFunction())
-                    .subscribe({
-                        startLocationTracking(googleMap)
-                    }, {
-                        if (it is PermissionDeniedException) {
-
-                            // todo if you need to show user popup with permission need description
-                        } else {
-                       // showErrorSnackbar(requireView(), getString(R.string.wont_detect_location))
-                        }
-                    })
-
-            setHasOptionsMenu(true)
-        }
-    }
 
     private fun startLocationTracking(googleMap: GoogleMap?) {
         if (fusedLocationClient == null) {

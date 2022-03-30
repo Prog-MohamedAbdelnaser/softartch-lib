@@ -6,6 +6,7 @@ import android.view.MenuInflater
 import android.view.View
 import android.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.maps.GoogleMap
 import com.softartch_lib.locationpicker.LocationAddress
 import com.google.android.gms.maps.MapView
 import com.softartch_lib.component.extension.hide
@@ -22,8 +23,6 @@ class AddressFragmentWithSearchBar : LocationPickerFragmentWithSearchBar(){
     override fun mapViewResource(): MapView =mapView
 
     override fun layoutResource(): Int = R.layout.fragment_location
-
-
 
     override fun onViewInflated(parentView: View, childView: View) {
         super.onViewInflated(parentView, childView)
