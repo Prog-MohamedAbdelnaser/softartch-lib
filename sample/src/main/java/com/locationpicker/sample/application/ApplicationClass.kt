@@ -30,7 +30,6 @@ class ApplicationClass : Application() {
         com.locationpicker.sample.application.ApplicationClass.Companion.appContext =this
 
 
-        SoftArtchLib.init()
 
         startKoin(this, listOf(applicationModule,
                         remoteModule,

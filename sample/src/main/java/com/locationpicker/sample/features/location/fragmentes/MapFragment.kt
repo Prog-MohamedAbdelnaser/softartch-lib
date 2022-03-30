@@ -1,5 +1,6 @@
 package com.locationpicker.sample.features.location.fragmentes
 
+import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
@@ -12,11 +13,17 @@ import com.softartch_lib.component.extension.hide
 import com.softartch_lib.component.extension.show
 import com.softartch_lib.locationpicker.LocationPickerFragmentWithSearchBar
 import com.locationpicker.sample.R
+import com.softartch_lib.SoftArtchLib
 import com.softartch_lib.locationpicker.BaseMapFragment
 import kotlinx.android.synthetic.main.fragment_location.*
 
 class MapFragment : BaseMapFragment(){
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        SoftArtchLib.init()
+
+    }
     //todo set your api key here
     override fun setGoogleAPIKEY(): String =""
 
