@@ -58,13 +58,6 @@ dependencies {
     implementation 'com.jakewharton.rxbinding:rxbinding:0.4.0'
     implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
 
-    // koin used for dependency injection
-    implementation "org.koin:koin-core:1.0.1"
-    testImplementation "org.koin:koin-test:1.0.1"
-    implementation "org.koin:koin-android:1.0.1"
-    implementation "org.koin:koin-androidx-scope:1.0.1"
-    implementation "org.koin:koin-androidx-viewmodel:1.0.1"
-
 
     //google service
     implementation "com.google.android.gms:play-services-maps:17.0.0"

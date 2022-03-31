@@ -1,7 +1,6 @@
-package com.softartch_lib.locationpicker
+package com.softartch_lib.domain
 
 import com.google.android.gms.maps.model.LatLng
-import com.softartch_lib.domain.UseCase
 import io.reactivex.Single
 
 class LocationAddressUseCase(private val locationAddressRepository: LocationAddressRepository) :

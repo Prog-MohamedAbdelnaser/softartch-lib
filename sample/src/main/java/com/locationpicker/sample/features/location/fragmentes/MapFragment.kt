@@ -2,18 +2,11 @@ package com.locationpicker.sample.features.location.fragmentes
 
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.View
-import android.widget.SearchView
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.softartch_lib.locationpicker.LocationAddress
+import com.google.android.gms.maps.GoogleMap
+import com.softartch_lib.domain.LocationAddress
 import com.google.android.gms.maps.MapView
-import com.softartch_lib.component.extension.hide
-import com.softartch_lib.component.extension.show
-import com.softartch_lib.locationpicker.LocationPickerFragmentWithSearchBar
 import com.locationpicker.sample.R
-import com.softartch_lib.SoftArtchLib
 import com.softartch_lib.locationpicker.BaseMapFragment
 import kotlinx.android.synthetic.main.fragment_location.*
 
@@ -21,7 +14,7 @@ class MapFragment : BaseMapFragment(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        SoftArtchLib.init()
+
 
     }
     //todo set your api key here
@@ -32,6 +25,19 @@ class MapFragment : BaseMapFragment(){
     override fun layoutResource(): Int = R.layout.fragment_location
 
 
+    override fun onMapSetup(map: GoogleMap?) {
+        super.onMapSetup(map)
+        map?.setOnMarkerClickListener {
+
+         false}
+        map?.uiSettings?.isMapToolbarEnabled=false
+        map?.uiSettings?.isRotateGesturesEnabled=false
+        map?.uiSettings?.isCompassEnabled=false
+        map?.uiSettings?.isScrollGesturesEnabled=false
+        map?.uiSettings?.isTiltGesturesEnabled=false
+        map?.uiSettings?.isZoomControlsEnabled=false
+        map?.uiSettings?.setAllGesturesEnabled(false)
+    }
 
     override fun onViewInflated(parentView: View, childView: View) {
         super.onViewInflated(parentView, childView)

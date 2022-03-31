@@ -14,18 +14,17 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.*
-import android.widget.SearchView
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.softartch_lib.R
 import com.softartch_lib.component.RequestDataState
 import com.softartch_lib.utility.hideKeyboard
 import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.*
 
 import com.google.android.gms.maps.*
@@ -35,26 +34,20 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.Task
-import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.widget.Autocomplete
-import com.google.android.libraries.places.widget.AutocompleteActivity
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
-import com.softartch_lib.component.extension.hide
-import com.softartch_lib.component.extension.show
 
 
 import com.softartch_lib.exceptions.LocationServiceRequestException
 import com.softartch_lib.exceptions.PermissionDeniedException
 import com.softartch_lib.component.fragment.BaseFragment
-import com.softartch_lib.component.widget.AutoCompleteSearchView
+import com.softartch_lib.domain.LocationAddress
+import com.softartch_lib.locationpicker.vm.LocationTrackViewModel
+import com.softartch_lib.locationpicker.vm.LocationTrackViewModelFactory
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
 import io.reactivex.SingleSource
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Function
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import kotlin.collections.ArrayList
 
 
 @Suppress("RedundantLambdaArrow", "MissingPermission")
@@ -100,7 +93,9 @@ abstract class BaseMapFragment : BaseFragment(){
 
     private var fusedLocationClient: FusedLocationProviderClient? = null
 
-    private val locationViewModel: LocationPickerViewModel by viewModel()
+    private lateinit var locationViewModel: LocationTrackViewModel
+
+    private lateinit var viewModelFactory : LocationTrackViewModelFactory
 
     private var savedInstanceState: Bundle? = null
 
@@ -133,41 +128,48 @@ abstract class BaseMapFragment : BaseFragment(){
 
     }
 
+    open fun onMapSetup(map: GoogleMap?){}
     override fun onViewInflated(parentView: View, childView: View) {
         mapViewResource().onCreate(savedInstanceState)
-        mapViewResource().getMapAsync(object :OnMapReadyCallback{
-            override fun onMapReady(map: GoogleMap?) {
-                googleMap = map
-                googleMap?.apply {
+        mapViewResource().getMapAsync { map ->
+            googleMap = map
 
-                    enableMapTypeControls(this)
+            googleMap?.apply {
 
-                    setupGoogleMap(this)
-                    disposable = checkPermission()
-                        .flatMap(requestLocationPermissionFunction())
-                        .doOnSuccess {
-                            listenToGPSChanges()
+                enableMapTypeControls(this)
+
+                setupGoogleMap(this)
+                disposable = checkPermission()
+                    .flatMap(requestLocationPermissionFunction())
+                    .doOnSuccess {
+                        listenToGPSChanges()
+                    }
+                    .flatMap(requestLocationServiceSettingFunction())
+                    .subscribe({
+                        startLocationTracking(googleMap)
+                    }, {
+                        if (it is PermissionDeniedException) {
+
+                            // todo if you need to show user popup with permission need description
+                        } else {
+                            // showErrorSnackbar(requireView(), getString(R.string.wont_detect_location))
                         }
-                        .flatMap(requestLocationServiceSettingFunction())
-                        .subscribe({
-                            startLocationTracking(googleMap)
-                        }, {
-                            if (it is PermissionDeniedException) {
+                    })
 
-                                // todo if you need to show user popup with permission need description
-                            } else {
-                                // showErrorSnackbar(requireView(), getString(R.string.wont_detect_location))
-                            }
-                        })
-
-                    setHasOptionsMenu(true)
-                }
+                setHasOptionsMenu(true)
             }
 
-        })
+            onMapSetup(googleMap)
+        }
 
 
         GOOGLE_API_KEY=setGoogleAPIKEY()
+
+
+        viewModelFactory = LocationTrackViewModelFactory(createLocationAddressUseCase())
+
+        locationViewModel = ViewModelProvider(this, viewModelFactory)
+            .get(LocationTrackViewModel::class.java)
 
         initViewModelObservers()
 

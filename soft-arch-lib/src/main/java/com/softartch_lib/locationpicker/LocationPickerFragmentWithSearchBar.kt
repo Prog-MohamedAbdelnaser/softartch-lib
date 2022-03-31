@@ -21,6 +21,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.softartch_lib.R
 import com.softartch_lib.component.RequestDataState
 import com.softartch_lib.utility.hideKeyboard
@@ -48,12 +49,14 @@ import com.softartch_lib.exceptions.LocationServiceRequestException
 import com.softartch_lib.exceptions.PermissionDeniedException
 import com.softartch_lib.component.fragment.BaseFragment
 import com.softartch_lib.component.widget.AutoCompleteSearchView
+import com.softartch_lib.domain.LocationAddress
+import com.softartch_lib.locationpicker.vm.LocationPickerViewModel
+import com.softartch_lib.locationpicker.vm.LocationPickerViewModelFactory
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
 import io.reactivex.SingleSource
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Function
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.collections.ArrayList
 
 
@@ -142,7 +145,9 @@ abstract class LocationPickerFragmentWithSearchBar : BaseFragment(), PlacesSearc
 
     private var fusedLocationClient: FusedLocationProviderClient? = null
 
-    private val locationViewModel: LocationPickerViewModel by viewModel()
+    private lateinit var  locationViewModel: LocationPickerViewModel
+
+    private lateinit var viewModelFactory: LocationPickerViewModelFactory
 
     private var savedInstanceState: Bundle? = null
 
@@ -228,6 +233,14 @@ abstract class LocationPickerFragmentWithSearchBar : BaseFragment(), PlacesSearc
         placesSearchResultAdapter = PlacesSearchResultAdapter(requireContext(),localizationFillter)
 
         placesSearchResultAdapter!!.setClickListener(this)
+
+
+        viewModelFactory = LocationPickerViewModelFactory(createLocationAddressUseCases())
+
+        locationViewModel = ViewModelProvider(this, viewModelFactory)
+            .get(LocationPickerViewModel::class.java)
+
+
         initViewModelObservers()
 
 

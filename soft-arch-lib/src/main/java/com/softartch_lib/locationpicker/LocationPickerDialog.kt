@@ -9,6 +9,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
 import android.os.Build
@@ -27,8 +28,8 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.*
@@ -42,12 +43,17 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
-import com.locationpicker.sample.base.utility.MapUtility
 import com.softartch_lib.R
 import com.softartch_lib.component.RequestDataState
 import com.softartch_lib.component.dialogs.CustomeProgressDialog
+import com.softartch_lib.domain.LocationAddress
+import com.softartch_lib.domain.LocationAddressRepository
+import com.softartch_lib.domain.LocationAddressUseCase
+import com.softartch_lib.domain.LocationAddressUseCases
 import com.softartch_lib.exceptions.LocationServiceRequestException
 import com.softartch_lib.exceptions.PermissionDeniedException
+import com.softartch_lib.locationpicker.vm.LocationPickerViewModel
+import com.softartch_lib.locationpicker.vm.LocationPickerViewModelFactory
 import com.softartch_lib.utility.hideKeyboard
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
@@ -55,7 +61,8 @@ import io.reactivex.SingleSource
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Function
 import kotlinx.android.synthetic.main.fragment_base.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.*
+import kotlin.collections.ArrayList
 
 abstract class LocationPickerDialog: DialogFragment(), OnMapReadyCallback,
     PlacesSearchResultAdapter.ClickPlaceItemListener{
@@ -137,9 +144,9 @@ abstract class LocationPickerDialog: DialogFragment(), OnMapReadyCallback,
 
         private var searchResultList: ArrayList<PlaceAutoComplete> = ArrayList()
 
-        private val locationViewModel: LocationPickerViewModel by viewModel()
+        private lateinit var locationViewModel: LocationPickerViewModel
 
-
+        private lateinit var viewModelFactory: LocationPickerViewModelFactory
 
     @LayoutRes
     abstract fun layoutResource(): Int
@@ -204,9 +211,26 @@ abstract class LocationPickerDialog: DialogFragment(), OnMapReadyCallback,
 
         placesSearchResultAdapter!!.setClickListener(this)
 
+        viewModelFactory = LocationPickerViewModelFactory(createLocationAddressUseCases())
+
+        locationViewModel = ViewModelProvider(this, viewModelFactory)
+            .get(LocationPickerViewModel::class.java)
+
         initViewModelObservers()
     }
 
+    private fun createLocationAddressUseCase(): LocationAddressUseCase {
+        return LocationAddressUseCase(
+            LocationAddressRepository(Geocoder(requireContext(), Locale.getDefault()), "service not available", "location not valid", "location not valid")
+        )
+    }
+
+    fun createLocationAddressUseCases(): LocationAddressUseCases {
+        return LocationAddressUseCases(
+            createLocationAddressUseCase() ,
+            Places.createClient(requireContext())
+        )
+    }
 
 /*    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         requireActivity().window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -396,6 +420,7 @@ abstract class LocationPickerDialog: DialogFragment(), OnMapReadyCallback,
         fusedLocationClient?.removeLocationUpdates(locationCallback)
     }
 
+    @SuppressLint("MissingPermission")
     private fun startLocationUpdate() {
         if (locationUpdateStarted) {
             fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallback, null)
@@ -472,6 +497,7 @@ abstract class LocationPickerDialog: DialogFragment(), OnMapReadyCallback,
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun enableGoogleMapMyLocation(googleMap: GoogleMap?, locationSource: LocationSource) {
         googleMap?.apply {
             setLocationSource(locationSource)

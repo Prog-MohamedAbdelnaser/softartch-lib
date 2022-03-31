@@ -1,4 +1,4 @@
-package com.softartch_lib.locationpicker
+package com.softartch_lib.domain
 
 import android.location.Address
 import android.location.Geocoder

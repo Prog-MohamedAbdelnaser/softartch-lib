@@ -1,16 +1,9 @@
 package com.locationpicker.sample.features.location.fragmentes
 
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.View
-import android.widget.SearchView
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.maps.GoogleMap
-import com.softartch_lib.locationpicker.LocationAddress
+import com.softartch_lib.domain.LocationAddress
 import com.google.android.gms.maps.MapView
-import com.softartch_lib.component.extension.hide
-import com.softartch_lib.component.extension.show
 import com.softartch_lib.locationpicker.LocationPickerFragmentWithSearchBar
 import com.locationpicker.sample.R
 import kotlinx.android.synthetic.main.fragment_location.*

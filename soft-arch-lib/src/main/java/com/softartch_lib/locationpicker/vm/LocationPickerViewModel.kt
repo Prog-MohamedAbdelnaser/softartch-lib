@@ -1,6 +1,5 @@
-package com.softartch_lib.locationpicker
+package com.softartch_lib.locationpicker.vm
 
-import android.content.Context
 import android.graphics.Typeface
 import android.text.style.StyleSpan
 import android.util.Log
@@ -8,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.tasks.Tasks
-import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.model.TypeFilter
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
@@ -16,6 +14,10 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.maps.android.SphericalUtil
 import com.softartch_lib.component.RequestDataState
 import com.softartch_lib.exceptions.ApiKeyRequiredException
+import com.softartch_lib.domain.LocationAddress
+import com.softartch_lib.domain.LocationAddressUseCase
+import com.softartch_lib.domain.LocationAddressUseCases
+import com.softartch_lib.locationpicker.PlaceAutoComplete
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -23,11 +25,11 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 
-class LocationPickerViewModel(private val locationAddressUseCase: LocationAddressUseCase,
-                               private val token: AutocompleteSessionToken,
-                               private val contect:Context) : ViewModel() {
+class LocationPickerViewModel(private val useCases: LocationAddressUseCases) : ViewModel() {
 
     private val disposables=CompositeDisposable()
+
+    private  val token  = AutocompleteSessionToken.newInstance()
 
     var lastSelectedLocation :LatLng?=null
 
@@ -39,8 +41,6 @@ class LocationPickerViewModel(private val locationAddressUseCase: LocationAddres
 
     var placesSearchLiveDataState =MutableLiveData<RequestDataState<ArrayList<PlaceAutoComplete>>>()
 
-    var placesClient:PlacesClient?=null
-
     companion object {
         const val ONE_METER = 1
     }
@@ -50,7 +50,7 @@ class LocationPickerViewModel(private val locationAddressUseCase: LocationAddres
     init {
 
         try {
-            placesClient = Places.createClient(contect)
+           // placesClient = Places.createClient(context)
         }catch (e:Exception){
             e.printStackTrace()
         }
@@ -83,7 +83,8 @@ class LocationPickerViewModel(private val locationAddressUseCase: LocationAddres
         if (targetAddress == null) {
             locationAddressSubject.onNext(location)
         } else {
-            targetLocationAddress=LocationAddress(location!!.latitude,location.longitude,targetAddress.toString())
+            targetLocationAddress=
+                LocationAddress(location!!.latitude,location.longitude,targetAddress.toString())
             locationAddressLiveDataState.postValue(RequestDataState.Success(targetLocationAddress!!))
         }
     }
@@ -91,13 +92,13 @@ class LocationPickerViewModel(private val locationAddressUseCase: LocationAddres
     fun fetchLocationAddress(latlng: LatLng?) {
 
         lastSelectedLocation = latlng
-        disposables.add(locationAddressUseCase.execute(latlng)
+        disposables.add(useCases.locationAddressUseCase.execute(latlng)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
 
                 targetAddress = it
-                targetLocationAddress =LocationAddress(latlng!!.latitude,latlng.longitude,it)
+                targetLocationAddress = LocationAddress(latlng!!.latitude,latlng.longitude,it)
                 locationAddressLiveDataState.value =RequestDataState.Success(targetLocationAddress!!)
 
             }, {
@@ -131,9 +132,9 @@ class LocationPickerViewModel(private val locationAddressUseCase: LocationAddres
 
     fun getPredictions(constraint: CharSequence,localizationFillter:String): Single<ArrayList<PlaceAutoComplete>> {
 
-       return Single.create<ArrayList<PlaceAutoComplete>> {emitter->
+       return Single.create<ArrayList<PlaceAutoComplete>> { emitter->
 
-           if (placesClient==null){
+           if (useCases.placesClient==null){
                emitter.onError(ApiKeyRequiredException(message = "ApiKeyRequiredException"))
                return@create
            }
@@ -150,7 +151,7 @@ class LocationPickerViewModel(private val locationAddressUseCase: LocationAddres
             .build()
 
 
-        val autoCompletePredictions = placesClient?.findAutocompletePredictions(request)
+        val autoCompletePredictions = useCases.placesClient?.findAutocompletePredictions(request)
 
         Tasks.await(autoCompletePredictions!!, 60, TimeUnit.SECONDS)
 
@@ -160,10 +161,12 @@ class LocationPickerViewModel(private val locationAddressUseCase: LocationAddres
 
                 it.autocompletePredictions.iterator().forEach { it ->
                     Log.i("getPredictions","getPredictions ${it.toString()}")
-                    resultList.add(PlaceAutoComplete(
+                    resultList.add(
+                        PlaceAutoComplete(
                         it.placeId,
                         it.getPrimaryText(STYLE_NORMAL).toString(),
-                        it.getFullText(STYLE_BOLD).toString()))
+                        it.getFullText(STYLE_BOLD).toString())
+                    )
                 }
                 emitter.onSuccess(resultList)
             }
@@ -175,4 +178,9 @@ class LocationPickerViewModel(private val locationAddressUseCase: LocationAddres
        }
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        disposables.dispose()
+
+    }
 }

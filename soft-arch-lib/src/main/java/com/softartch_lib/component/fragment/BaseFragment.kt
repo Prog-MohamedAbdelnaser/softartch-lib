@@ -1,17 +1,23 @@
 package com.softartch_lib.component.fragment
 
+import android.location.Geocoder
 import android.os.Build
 import android.os.Bundle
 import android.view.*
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.net.PlacesClient
 import com.softartch_lib.R
 import com.softartch_lib.component.dialogs.CustomeProgressDialog
+import com.softartch_lib.domain.LocationAddressRepository
+import com.softartch_lib.domain.LocationAddressUseCase
+import com.softartch_lib.domain.LocationAddressUseCases
 import kotlinx.android.synthetic.main.fragment_base.*
 import kotlinx.android.synthetic.main.loading.*
 import kotlinx.android.synthetic.main.place_holder_layout.*
-import org.koin.standalone.KoinComponent
+import java.util.*
 
 abstract class BaseFragment : Fragment() {
 
@@ -40,6 +46,7 @@ abstract class BaseFragment : Fragment() {
     }
 
     open fun onViewInflated(parentView: View, childView: View) {
+
     }
 
 
@@ -86,4 +93,16 @@ abstract class BaseFragment : Fragment() {
         }
     }
 
+     fun createLocationAddressUseCase(): LocationAddressUseCase {
+        return LocationAddressUseCase(
+            LocationAddressRepository(Geocoder(requireContext(), Locale.getDefault()), "service not available", "location not valid", "location not valid")
+        )
+    }
+
+    fun createLocationAddressUseCases(): LocationAddressUseCases {
+        return LocationAddressUseCases(
+            createLocationAddressUseCase() ,
+            Places.createClient(requireContext())
+        )
+    }
 }
