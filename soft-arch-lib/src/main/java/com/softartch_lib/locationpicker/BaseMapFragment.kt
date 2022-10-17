@@ -128,7 +128,7 @@ abstract class BaseMapFragment : BaseFragment(){
 
     }
 
-    open fun onMapSetup(map: GoogleMap?){}
+    open fun onMapSetup(map: GoogleMap){}
     override fun onViewInflated(parentView: View, childView: View) {
         mapViewResource().onCreate(savedInstanceState)
         mapViewResource().getMapAsync { map ->
@@ -159,7 +159,7 @@ abstract class BaseMapFragment : BaseFragment(){
                 setHasOptionsMenu(true)
             }
 
-            onMapSetup(googleMap)
+            onMapSetup(googleMap!!)
         }
 
 
@@ -242,7 +242,7 @@ abstract class BaseMapFragment : BaseFragment(){
             stopLocationUpdate()
         }
 
-        override fun activate(locationChangedListener: OnLocationChangedListener?) {
+        override fun activate(locationChangedListener: OnLocationChangedListener) {
             this@BaseMapFragment.locationChangedListener = locationChangedListener
             locationUpdateStarted = true
 //            getLastKnownLocation()
@@ -251,12 +251,12 @@ abstract class BaseMapFragment : BaseFragment(){
     }
 
     private fun stopLocationUpdate() {
-        fusedLocationClient?.removeLocationUpdates(locationCallback)
+        fusedLocationClient?.removeLocationUpdates(locationCallback!!)
     }
 
     private fun startLocationUpdate() {
         if (locationUpdateStarted) {
-            fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallback, null)
+            fusedLocationClient?.requestLocationUpdates(locationRequest!!, locationCallback!!, null)
         }
     }
 
@@ -293,7 +293,7 @@ abstract class BaseMapFragment : BaseFragment(){
 
             setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter {
                 @SuppressLint("InflateParams")
-                override fun getInfoContents(p0: Marker?): View? {
+                override fun getInfoContents(p0: Marker): View? {
                     if (tvAddress == null) {
                         tvAddress = LayoutInflater
                                 .from(context)
@@ -303,7 +303,7 @@ abstract class BaseMapFragment : BaseFragment(){
                     return tvAddress
                 }
 
-                override fun getInfoWindow(p0: Marker?): View? = null
+                override fun getInfoWindow(p0: Marker): View? = null
 
             })
 
@@ -461,8 +461,9 @@ abstract class BaseMapFragment : BaseFragment(){
         if (bitmap == null) {
             bitmap = getBitmapFromVectorDrawable()
         }
+
         return MarkerOptions().position(latLng).icon(
-                BitmapDescriptorFactory.fromBitmap(bitmap)
+                BitmapDescriptorFactory.fromBitmap(bitmap!!)
         )
     }
 

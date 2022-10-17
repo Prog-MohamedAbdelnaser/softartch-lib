@@ -358,9 +358,9 @@ abstract class LocationPickerDialog: DialogFragment(), OnMapReadyCallback,
         targetMarker?.showInfoWindow()
     }
 
-    override fun onMapReady(googleMap: GoogleMap?) {
+    override fun onMapReady(googleMap: GoogleMap) {
         this.googleMap = googleMap
-        googleMap?.apply {
+        googleMap.apply {
 
             enableMapTypeControls(this)
 
@@ -408,7 +408,7 @@ abstract class LocationPickerDialog: DialogFragment(), OnMapReadyCallback,
             stopLocationUpdate()
         }
 
-        override fun activate(locationChangedListener: LocationSource.OnLocationChangedListener?) {
+        override fun activate(locationChangedListener: LocationSource.OnLocationChangedListener) {
             this@LocationPickerDialog.locationChangedListener = locationChangedListener
             locationUpdateStarted = true
 //            getLastKnownLocation()
@@ -417,13 +417,16 @@ abstract class LocationPickerDialog: DialogFragment(), OnMapReadyCallback,
     }
 
     private fun stopLocationUpdate() {
-        fusedLocationClient?.removeLocationUpdates(locationCallback)
+        locationCallback?.let { fusedLocationClient?.removeLocationUpdates(it) }
     }
 
     @SuppressLint("MissingPermission")
     private fun startLocationUpdate() {
         if (locationUpdateStarted) {
-            fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallback, null)
+            locationCallback?.let {
+                fusedLocationClient?.requestLocationUpdates(locationRequest!!,
+                    it, null)
+            }
         }
     }
 
@@ -458,7 +461,7 @@ abstract class LocationPickerDialog: DialogFragment(), OnMapReadyCallback,
 
             setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter {
                 @SuppressLint("InflateParams")
-                override fun getInfoContents(p0: Marker?): View? {
+                override fun getInfoContents(p0: Marker): View? {
                     if (tvAddress == null) {
                         tvAddress = LayoutInflater
                             .from(context)
@@ -468,7 +471,7 @@ abstract class LocationPickerDialog: DialogFragment(), OnMapReadyCallback,
                     return tvAddress
                 }
 
-                override fun getInfoWindow(p0: Marker?): View? = null
+                override fun getInfoWindow(p0: Marker): View? = null
 
             })
 
@@ -641,7 +644,7 @@ abstract class LocationPickerDialog: DialogFragment(), OnMapReadyCallback,
             bitmap = getBitmapFromVectorDrawable()
         }
         return MarkerOptions().position(latLng).icon(
-            BitmapDescriptorFactory.fromBitmap(bitmap)
+            BitmapDescriptorFactory.fromBitmap(bitmap!!)
         )
     }
 

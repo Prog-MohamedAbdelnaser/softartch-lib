@@ -189,7 +189,7 @@ abstract class LocationPickerFragmentWithSearchBar : BaseFragment(), PlacesSearc
     override fun onViewInflated(parentView: View, childView: View) {
         mapViewResource().onCreate(savedInstanceState)
         mapViewResource().getMapAsync(object :OnMapReadyCallback{
-            override fun onMapReady(map: GoogleMap?) {
+            override fun onMapReady(map: GoogleMap) {
                 googleMap = map
                 googleMap?.apply {
 
@@ -414,7 +414,7 @@ abstract class LocationPickerFragmentWithSearchBar : BaseFragment(), PlacesSearc
             stopLocationUpdate()
         }
 
-        override fun activate(locationChangedListener: OnLocationChangedListener?) {
+        override fun activate(locationChangedListener: OnLocationChangedListener) {
             this@LocationPickerFragmentWithSearchBar.locationChangedListener = locationChangedListener
             locationUpdateStarted = true
 //            getLastKnownLocation()
@@ -423,12 +423,15 @@ abstract class LocationPickerFragmentWithSearchBar : BaseFragment(), PlacesSearc
     }
 
     private fun stopLocationUpdate() {
-        fusedLocationClient?.removeLocationUpdates(locationCallback)
+        locationCallback?.let { fusedLocationClient?.removeLocationUpdates(it) }
     }
 
     private fun startLocationUpdate() {
         if (locationUpdateStarted) {
-            fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallback, null)
+            locationCallback?.let {
+                fusedLocationClient?.requestLocationUpdates(locationRequest!!,
+                    it, null)
+            }
         }
     }
 
@@ -463,7 +466,7 @@ abstract class LocationPickerFragmentWithSearchBar : BaseFragment(), PlacesSearc
 
             setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter {
                 @SuppressLint("InflateParams")
-                override fun getInfoContents(p0: Marker?): View? {
+                override fun getInfoContents(p0: Marker): View? {
                     if (tvAddress == null) {
                         tvAddress = LayoutInflater
                                 .from(context)
@@ -473,7 +476,7 @@ abstract class LocationPickerFragmentWithSearchBar : BaseFragment(), PlacesSearc
                     return tvAddress
                 }
 
-                override fun getInfoWindow(p0: Marker?): View? = null
+                override fun getInfoWindow(p0: Marker): View? = null
 
             })
 
@@ -645,7 +648,7 @@ abstract class LocationPickerFragmentWithSearchBar : BaseFragment(), PlacesSearc
             bitmap = getBitmapFromVectorDrawable()
         }
         return MarkerOptions().position(latLng).icon(
-                BitmapDescriptorFactory.fromBitmap(bitmap)
+                BitmapDescriptorFactory.fromBitmap(bitmap!!)
         )
     }
 

@@ -25,12 +25,12 @@ class MapFragment : BaseMapFragment(){
     override fun layoutResource(): Int = R.layout.fragment_location
 
 
-    override fun onMapSetup(map: GoogleMap?) {
+    override fun onMapSetup(map: GoogleMap) {
         super.onMapSetup(map)
         map?.setOnMarkerClickListener {
 
          false}
-        map?.uiSettings?.isMapToolbarEnabled=false
+        map.uiSettings.isMapToolbarEnabled =false
         map?.uiSettings?.isRotateGesturesEnabled=false
         map?.uiSettings?.isCompassEnabled=false
         map?.uiSettings?.isScrollGesturesEnabled=false
