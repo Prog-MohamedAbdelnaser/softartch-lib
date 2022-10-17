@@ -124,7 +124,7 @@ abstract class LocationPickerDialog: DialogFragment(), OnMapReadyCallback,
 
         private var targetAccuracy: Float = 0f
 
-        private var userLocation: Location? = null
+        var userLocation: Location? = null
 
         private var locationCallback: LocationCallback? = null
 

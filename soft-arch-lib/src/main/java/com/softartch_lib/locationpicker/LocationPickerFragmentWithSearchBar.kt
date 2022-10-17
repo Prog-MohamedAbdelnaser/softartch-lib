@@ -159,7 +159,7 @@ abstract class LocationPickerFragmentWithSearchBar : BaseFragment(), PlacesSearc
 
     private var targetAccuracy: Float = 0f
 
-    private var userLocation: Location? = null
+    var userLocation: Location? = null
 
     private var locationCallback: LocationCallback? = null
 
@@ -243,6 +243,7 @@ abstract class LocationPickerFragmentWithSearchBar : BaseFragment(), PlacesSearc
     open fun onPermissionDenied(){
 
     }
+
     fun setSearchViewAutoComplete(searchView: AutoCompleteSearchView){
         this.searchViewAuto=searchView
         initSearchViewRecyclerView()
