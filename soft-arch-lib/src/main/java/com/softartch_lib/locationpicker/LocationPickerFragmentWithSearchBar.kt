@@ -57,11 +57,13 @@ import io.reactivex.SingleEmitter
 import io.reactivex.SingleSource
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Function
+import timber.log.Timber
 import kotlin.collections.ArrayList
 
 
 @Suppress("RedundantLambdaArrow", "MissingPermission")
-abstract class LocationPickerFragmentWithSearchBar : BaseFragment(), PlacesSearchResultAdapter.ClickPlaceItemListener{
+abstract class LocationPickerFragmentWithSearchBar : BaseFragment(), PlacesSearchResultAdapter.ClickPlaceItemListener,
+    OnMapReadyCallback {
 
 
     override fun clickPickedPlace(place: Place) {
@@ -188,39 +190,8 @@ abstract class LocationPickerFragmentWithSearchBar : BaseFragment(), PlacesSearc
 
     override fun onViewInflated(parentView: View, childView: View) {
         mapViewResource().onCreate(savedInstanceState)
-        mapViewResource().getMapAsync(object :OnMapReadyCallback{
-            override fun onMapReady(map: GoogleMap) {
-                googleMap = map
-                googleMap?.apply {
-
-                    enableMapTypeControls(this)
-
-                    setupGoogleMap(this)
-                    disposable = checkPermission()
-                        .flatMap(requestLocationPermissionFunction())
-                        .doOnSuccess {
-                            listenToGPSChanges()
-                        }
-                        .flatMap(requestLocationServiceSettingFunction())
-                        .subscribe({
-                            startLocationTracking(googleMap)
-                        }, {
-                            if (it is PermissionDeniedException) {
-
-                                // todo if you need to show user popup with permission need description
-                            } else {
-                                // showErrorSnackbar(requireView(), getString(R.string.wont_detect_location))
-                            }
-                        })
-
-                    setHasOptionsMenu(true)
-                }
-            }
-
-        })
-
+        mapViewResource().getMapAsync (this)
         GOOGLE_API_KEY=setGoogleAPIKEY()
-
         try {
             if (!Places.isInitialized()) {
                 Places.initialize(requireContext(), GOOGLE_API_KEY!!)
@@ -229,25 +200,49 @@ abstract class LocationPickerFragmentWithSearchBar : BaseFragment(), PlacesSearc
         }catch (e:Exception){
             e.printStackTrace()
         }
-
         placesSearchResultAdapter = PlacesSearchResultAdapter(requireContext(),localizationFillter)
-
         placesSearchResultAdapter!!.setClickListener(this)
-
-
         viewModelFactory = LocationPickerViewModelFactory(createLocationAddressUseCases())
-
         locationViewModel = ViewModelProvider(this, viewModelFactory)
             .get(LocationPickerViewModel::class.java)
-
-
         initViewModelObservers()
-
-
-       // placesSearchResultAdapter?.setClickListener(this)
-
     }
 
+    override fun onMapReady(p0: GoogleMap) {
+        initMap(p0)
+    }
+    private  fun  initMap(map: GoogleMap){
+        googleMap = map
+        googleMap?.apply {
+
+            enableMapTypeControls(this)
+
+            setupGoogleMap(this)
+
+            initLocationCallBack()
+
+            setHasOptionsMenu(true)
+        }
+    }
+
+    public fun initLocationCallBack() {
+        disposable = checkPermission()
+            .flatMap(requestLocationPermissionFunction())
+            .doOnSuccess { listenToGPSChanges() }
+            .flatMap(requestLocationServiceSettingFunction())
+            .subscribe({
+                startLocationTracking(googleMap)
+            }, {
+                if (it is PermissionDeniedException) {
+                    onPermissionDenied()
+                    // todo if you need to show user popup with permission need description
+                }
+            })
+    }
+
+    open fun onPermissionDenied(){
+
+    }
     fun setSearchViewAutoComplete(searchView: AutoCompleteSearchView){
         this.searchViewAuto=searchView
         initSearchViewRecyclerView()
