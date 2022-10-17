@@ -42,27 +42,27 @@ class ApplicationClass : Application() {
 
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
 
-            override fun onActivityPaused(activity: Activity?) {
+            override fun onActivityPaused(activity: Activity) {
             }
 
-            override fun onActivityResumed(activity: Activity?) {
+            override fun onActivityResumed(activity: Activity) {
                 com.locationpicker.sample.application.ApplicationClass.Companion.currentActivity = activity?.componentName
             }
 
-            override fun onActivityStarted(activity: Activity?) {
+            override fun onActivityStarted(activity: Activity) {
             }
 
-            override fun onActivityDestroyed(activity: Activity?) {
+            override fun onActivityDestroyed(activity: Activity) {
                 com.locationpicker.sample.application.ApplicationClass.Companion.currentActivity = null
             }
 
-            override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
             }
 
-            override fun onActivityStopped(activity: Activity?) {
+            override fun onActivityStopped(activity: Activity) {
             }
 
-            override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
             }
 
         })
